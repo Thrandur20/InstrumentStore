@@ -48,6 +48,7 @@ public class VendorServiceImpl implements VendorCommandService, VendorQueryServi
         } else {
             throw new NoSuchResourceFoundException("No vendor was found for the given id");
         }
+        vendorRepository.save(vendor.get());
     }
 
     @Override

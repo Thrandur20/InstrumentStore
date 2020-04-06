@@ -12,12 +12,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -34,9 +32,81 @@ public class VendorServiceImplTest {
     }
 
     @Test
+    public void createVendor() {
+        //Given
+        long VENDOR_ID = 1L;
+        String VENDOR_NAME = "Vendor";
+        VendorDTO vendorDTO = new VendorDTO(VENDOR_ID, VENDOR_NAME);
+        vendorService = new VendorServiceImpl(vendorRepository);
+        //When
+        vendorService.createVendor(vendorDTO);
+        //Then
+        Vendor expectedVendor = new Vendor();
+        expectedVendor.setVendorName(VENDOR_NAME);
+        verify(vendorRepository).save(expectedVendor);
+    }
+
+    @Test
+    public void deleteVendorById() {
+        //Given
+        long VENDOR_ID = 1L;
+        Vendor vendor = createDefaultVendor(VENDOR_ID);
+        Vendor vendor2 = createDefaultVendor(2L);
+        List<Vendor> returnedList = Arrays.asList(vendor, vendor2);
+        when(vendorRepository.findById(VENDOR_ID)).thenReturn(Optional.of(vendor));
+        when(vendorRepository.findAll()).thenReturn(returnedList);
+        vendorService = new VendorServiceImpl(vendorRepository);
+        //When
+        vendorService.deleteVendorById(VENDOR_ID);
+        //Then
+        verify(vendorRepository).delete(vendor);
+    }
+
+    @Test(expected = NoSuchResourceFoundException.class)
+    public void deleteVendorButThrowExceptionBecauseIdWasNotFound() {
+        //Given
+        long VENDOR_ID = 2L;
+        when(vendorRepository.findById(VENDOR_ID)).thenReturn(Optional.empty());
+        vendorService = new VendorServiceImpl(vendorRepository);
+        //When
+        vendorService.deleteVendorById(VENDOR_ID);
+        //Then exception is thrown
+    }
+
+    @Test
+    public void updateVendorWithGivenInformation() {
+        //Given
+        long VENDOR_ID = 1L;
+        String VENDOR_NAME = "Vendor2";
+        Vendor defaultVendor = createDefaultVendor(VENDOR_ID);
+        VendorDTO updatedInfoDTO = new VendorDTO(VENDOR_ID, VENDOR_NAME);
+        when(vendorRepository.findById(VENDOR_ID)).thenReturn(Optional.of(defaultVendor));
+        vendorService = new VendorServiceImpl(vendorRepository);
+        //When
+        vendorService.updateVendor(VENDOR_ID, updatedInfoDTO);
+        //Then
+        Vendor expectedVendor = new Vendor();
+        expectedVendor.setVendorId(VENDOR_ID);
+        expectedVendor.setVendorName(VENDOR_NAME);
+        verify(vendorRepository).save(expectedVendor);
+    }
+
+    @Test(expected = NoSuchResourceFoundException.class)
+    public void updateVendorButThrowExceptionBecauseIdWasNotFound() {
+        //Given
+        long VENDOR_ID = 2L;
+        VendorDTO vendorDTO = new VendorDTO(1L, "Vendor");
+        when(vendorRepository.findById(VENDOR_ID)).thenReturn(Optional.empty());
+        vendorService = new VendorServiceImpl(vendorRepository);
+        //When
+        vendorService.updateVendor(VENDOR_ID, vendorDTO);
+        //Then exception is thrown
+    }
+
+    @Test
     public void getAllVendorsAndReturnList() {
         //Given
-        Vendor vendor = createDefaultVendor();
+        Vendor vendor = createDefaultVendor(1L);
         List<Vendor> vendorList = Collections.singletonList(vendor);
         when(vendorRepository.findAll()).thenReturn(vendorList);
         vendorService = new VendorServiceImpl(vendorRepository);
@@ -67,7 +137,7 @@ public class VendorServiceImplTest {
     public void getVendorByIdWhenIdIsValid() {
         //Given
         long VENDOR_ID = 1L;
-        Vendor Vendor = createDefaultVendor();
+        Vendor Vendor = createDefaultVendor(VENDOR_ID);
         when(vendorRepository.findById(VENDOR_ID)).thenReturn(java.util.Optional.of(Vendor));
         vendorService = new VendorServiceImpl(vendorRepository);
         //When
@@ -89,9 +159,9 @@ public class VendorServiceImplTest {
         //Then throw exception
     }
 
-    private Vendor createDefaultVendor() {
+    private Vendor createDefaultVendor(long vendorId) {
         Vendor vendor = new Vendor();
-        vendor.setVendorId(1L);
+        vendor.setVendorId(vendorId);
         vendor.setVendorName("Vendor");
         return vendor;
     }

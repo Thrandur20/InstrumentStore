@@ -6,7 +6,6 @@ import com.tudor.dodonete.mizuho.InstrumentStore.exceptions.NoSuchResourceFoundE
 import com.tudor.dodonete.mizuho.InstrumentStore.repository.InstrumentRepository;
 import com.tudor.dodonete.mizuho.InstrumentStore.service.InstrumentCommandService;
 import com.tudor.dodonete.mizuho.InstrumentStore.service.InstrumentQueryService;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -47,6 +46,7 @@ public class InstrumentServiceImpl implements InstrumentQueryService, Instrument
         } else {
             throw new NoSuchResourceFoundException("No instrument was found for the given id");
         }
+        instrumentRepository.save(instrument.get());
     }
 
     @Override

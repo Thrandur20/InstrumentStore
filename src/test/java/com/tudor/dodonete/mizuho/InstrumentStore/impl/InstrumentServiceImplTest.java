@@ -17,7 +17,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -31,6 +32,75 @@ public class InstrumentServiceImplTest {
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void createInstrument() {
+        //Given
+        long INSTRUMENT_ID = 1L;
+        String INSTRUMENT_NAME = "Instrument";
+        InstrumentDTO instrumentDTO = new InstrumentDTO(INSTRUMENT_ID, INSTRUMENT_NAME);
+        instrumentService = new InstrumentServiceImpl(instrumentRepository);
+        //When
+        instrumentService.createInstrument(instrumentDTO);
+        //Then
+        Instrument expectedInstrument = new Instrument();
+        expectedInstrument.setInstrumentName(INSTRUMENT_NAME);
+        verify(instrumentRepository).save(expectedInstrument);
+    }
+
+    @Test
+    public void deleteInstrumentById() {
+        //Given
+        long INSTRUMENT_ID = 1L;
+        Instrument instrument = createDefaultInstrument();
+        when(instrumentRepository.findById(INSTRUMENT_ID)).thenReturn(Optional.of(instrument));
+        instrumentService = new InstrumentServiceImpl(instrumentRepository);
+        //When
+        instrumentService.deleteInstrumentById(INSTRUMENT_ID);
+        //Then
+        verify(instrumentRepository).delete(instrument);
+    }
+
+    @Test(expected = NoSuchResourceFoundException.class)
+    public void deleteInstrumentButThrowExceptionBecauseIdWasNotFound() {
+        //Given
+        long INSTRUMENT_ID = 2L;
+        when(instrumentRepository.findById(INSTRUMENT_ID)).thenReturn(Optional.empty());
+        instrumentService = new InstrumentServiceImpl(instrumentRepository);
+        //When
+        instrumentService.deleteInstrumentById(INSTRUMENT_ID);
+        //Then exception is thrown
+    }
+
+    @Test
+    public void updateInstrumentWithGivenInformation() {
+        //Given
+        long INSTRUMENT_ID = 1L;
+        String INSTRUMENT_NAME = "Instrument2";
+        Instrument defaultInstrument = createDefaultInstrument();
+        InstrumentDTO updatedInfoDTO = new InstrumentDTO(INSTRUMENT_ID, INSTRUMENT_NAME);
+        when(instrumentRepository.findById(INSTRUMENT_ID)).thenReturn(Optional.of(defaultInstrument));
+        instrumentService = new InstrumentServiceImpl(instrumentRepository);
+        //When
+        instrumentService.updateInstrument(INSTRUMENT_ID, updatedInfoDTO);
+        //Then
+        Instrument expectedInstrument = new Instrument();
+        expectedInstrument.setInstrumentId(INSTRUMENT_ID);
+        expectedInstrument.setInstrumentName(INSTRUMENT_NAME);
+        verify(instrumentRepository).save(expectedInstrument);
+    }
+
+    @Test(expected = NoSuchResourceFoundException.class)
+    public void updateInstrumentButThrowExceptionBecauseIdWasNotFound() {
+        //Given
+        long INSTRUMENT_ID = 2L;
+        InstrumentDTO instrumentDTO = new InstrumentDTO(1L, "Instrument");
+        when(instrumentRepository.findById(INSTRUMENT_ID)).thenReturn(Optional.empty());
+        instrumentService = new InstrumentServiceImpl(instrumentRepository);
+        //When
+        instrumentService.updateInstrument(INSTRUMENT_ID, instrumentDTO);
+        //Then exception is thrown
     }
 
     @Test
@@ -79,7 +149,7 @@ public class InstrumentServiceImplTest {
     }
 
     @Test(expected = NoSuchResourceFoundException.class)
-    public void getInstrumentByIdWhenIdIsNotValidThenThrowException(){
+    public void getInstrumentByIdWhenIdIsNotValidThenThrowException() {
         //Given
         long INSTRUMENT_ID = 2L;
         when(instrumentRepository.findById(INSTRUMENT_ID)).thenReturn(Optional.empty());
