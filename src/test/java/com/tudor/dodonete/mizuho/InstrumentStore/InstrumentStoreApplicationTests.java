@@ -6,8 +6,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class InstrumentStoreApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
+
+    @Test
+    public void applicationContextTest() {
+        InstrumentStoreApplication.main(new String[]{});
+    }
 
 }

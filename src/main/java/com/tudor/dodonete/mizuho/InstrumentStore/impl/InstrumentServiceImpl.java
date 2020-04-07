@@ -2,10 +2,13 @@ package com.tudor.dodonete.mizuho.InstrumentStore.impl;
 
 import com.tudor.dodonete.mizuho.InstrumentStore.dto.InstrumentDTO;
 import com.tudor.dodonete.mizuho.InstrumentStore.entity.Instrument;
+import com.tudor.dodonete.mizuho.InstrumentStore.entity.Store;
 import com.tudor.dodonete.mizuho.InstrumentStore.exceptions.NoSuchResourceFoundException;
 import com.tudor.dodonete.mizuho.InstrumentStore.repository.InstrumentRepository;
+import com.tudor.dodonete.mizuho.InstrumentStore.repository.StoreRepository;
 import com.tudor.dodonete.mizuho.InstrumentStore.service.InstrumentCommandService;
 import com.tudor.dodonete.mizuho.InstrumentStore.service.InstrumentQueryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,9 +19,16 @@ import java.util.Optional;
 public class InstrumentServiceImpl implements InstrumentQueryService, InstrumentCommandService {
 
     private InstrumentRepository instrumentRepository;
+    private StoreRepository storeRepository;
 
+    @Autowired
     public InstrumentServiceImpl(InstrumentRepository instrumentRepository) {
         this.instrumentRepository = instrumentRepository;
+    }
+
+    @Autowired
+    public void setStoreRepository(StoreRepository storeRepository) {
+        this.storeRepository = storeRepository;
     }
 
     @Override
@@ -32,6 +42,8 @@ public class InstrumentServiceImpl implements InstrumentQueryService, Instrument
     public void deleteInstrumentById(long id) {
         Optional<Instrument> instrument = instrumentRepository.findById(id);
         if (instrument.isPresent()) {
+            List<Store> toBeDeletedFromStore = storeRepository.findAllByInstrument(instrument.get());
+            storeRepository.deleteAll(toBeDeletedFromStore);
             instrumentRepository.delete(instrument.get());
         } else {
             throw new NoSuchResourceFoundException("No instrument was found for the given id");
@@ -53,13 +65,11 @@ public class InstrumentServiceImpl implements InstrumentQueryService, Instrument
     public List<InstrumentDTO> getAllInstruments() {
         List<Instrument> instrumentList = instrumentRepository.findAll();
         List<InstrumentDTO> instrumentDtoList = new ArrayList<>();
-        instrumentList.forEach(ins -> {
-            instrumentDtoList.add(
-                    new InstrumentDTO(
-                            ins.getInstrumentId(),
-                            ins.getInstrumentName())
-            );
-        });
+        instrumentList.forEach(ins -> instrumentDtoList.add(
+                new InstrumentDTO(
+                        ins.getInstrumentId(),
+                        ins.getInstrumentName())
+        ));
         return instrumentDtoList;
     }
 

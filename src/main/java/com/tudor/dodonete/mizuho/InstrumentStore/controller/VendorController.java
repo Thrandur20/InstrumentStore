@@ -22,7 +22,7 @@ public class VendorController {
         this.vendorCommandService = vendorCommandService;
     }
 
-    @RequestMapping(value = "/vendor", method = RequestMethod.GET)
+    @RequestMapping(value = {"/", "/vendor"}, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<VendorDTO> getAllVendors() {
         return vendorQueryService.getAllVendors();

@@ -1,8 +1,10 @@
 package com.tudor.dodonete.mizuho.InstrumentStore.impl;
 
 import com.tudor.dodonete.mizuho.InstrumentStore.dto.VendorDTO;
+import com.tudor.dodonete.mizuho.InstrumentStore.entity.Store;
 import com.tudor.dodonete.mizuho.InstrumentStore.entity.Vendor;
 import com.tudor.dodonete.mizuho.InstrumentStore.exceptions.NoSuchResourceFoundException;
+import com.tudor.dodonete.mizuho.InstrumentStore.repository.StoreRepository;
 import com.tudor.dodonete.mizuho.InstrumentStore.repository.VendorRepository;
 import com.tudor.dodonete.mizuho.InstrumentStore.service.VendorCommandService;
 import com.tudor.dodonete.mizuho.InstrumentStore.service.VendorQueryService;
@@ -17,10 +19,16 @@ import java.util.Optional;
 public class VendorServiceImpl implements VendorCommandService, VendorQueryService {
 
     private VendorRepository vendorRepository;
+    private StoreRepository storeRepository;
 
     @Autowired
     public VendorServiceImpl(VendorRepository vendorRepository) {
         this.vendorRepository = vendorRepository;
+    }
+
+    @Autowired
+    public void setStoreRepository(StoreRepository storeRepository) {
+        this.storeRepository = storeRepository;
     }
 
     @Override
@@ -34,6 +42,8 @@ public class VendorServiceImpl implements VendorCommandService, VendorQueryServi
     public void deleteVendorById(long id) {
         Optional<Vendor> vendor = vendorRepository.findById(id);
         if (vendor.isPresent()) {
+            List<Store> storeInformationToBeDeleted = storeRepository.findAllByVendor(vendor.get());
+            storeRepository.deleteAll(storeInformationToBeDeleted);
             vendorRepository.delete(vendor.get());
         } else {
             throw new NoSuchResourceFoundException("No vendor was found for the given id");
@@ -55,13 +65,11 @@ public class VendorServiceImpl implements VendorCommandService, VendorQueryServi
     public List<VendorDTO> getAllVendors() {
         List<Vendor> vendorList = vendorRepository.findAll();
         List<VendorDTO> vendorDtoList = new ArrayList<>();
-        vendorList.forEach(vendor -> {
-            vendorDtoList.add(
-                    new VendorDTO(
-                            vendor.getVendorId(),
-                            vendor.getVendorName())
-            );
-        });
+        vendorList.forEach(vendor -> vendorDtoList.add(
+                new VendorDTO(
+                        vendor.getVendorId(),
+                        vendor.getVendorName())
+        ));
         return vendorDtoList;
     }
 

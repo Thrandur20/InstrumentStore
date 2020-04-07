@@ -13,6 +13,9 @@ public class StoreDTO {
     private String vendorName;
     private String instrumentName;
 
+    public StoreDTO() {
+    }
+
     public StoreDTO(long storeId, BigDecimal price, Date entryDate, String vendorName, String instrumentName) {
         this.storeId = storeId;
         this.price = price;

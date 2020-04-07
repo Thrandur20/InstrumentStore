@@ -3,6 +3,7 @@ package com.tudor.dodonete.mizuho.InstrumentStore.impl;
 import com.tudor.dodonete.mizuho.InstrumentStore.dto.VendorDTO;
 import com.tudor.dodonete.mizuho.InstrumentStore.entity.Vendor;
 import com.tudor.dodonete.mizuho.InstrumentStore.exceptions.NoSuchResourceFoundException;
+import com.tudor.dodonete.mizuho.InstrumentStore.repository.StoreRepository;
 import com.tudor.dodonete.mizuho.InstrumentStore.repository.VendorRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +26,9 @@ public class VendorServiceImplTest {
 
     @Mock
     private VendorRepository vendorRepository;
+
+    @Mock
+    private StoreRepository storeRepository;
 
     @Before
     public void init() {
@@ -51,11 +55,10 @@ public class VendorServiceImplTest {
         //Given
         long VENDOR_ID = 1L;
         Vendor vendor = createDefaultVendor(VENDOR_ID);
-        Vendor vendor2 = createDefaultVendor(2L);
-        List<Vendor> returnedList = Arrays.asList(vendor, vendor2);
         when(vendorRepository.findById(VENDOR_ID)).thenReturn(Optional.of(vendor));
-        when(vendorRepository.findAll()).thenReturn(returnedList);
+        when(storeRepository.findAllByVendor(vendor)).thenReturn(new ArrayList<>());
         vendorService = new VendorServiceImpl(vendorRepository);
+        vendorService.setStoreRepository(storeRepository);
         //When
         vendorService.deleteVendorById(VENDOR_ID);
         //Then

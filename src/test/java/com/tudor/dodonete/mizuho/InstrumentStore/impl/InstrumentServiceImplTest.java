@@ -4,6 +4,7 @@ import com.tudor.dodonete.mizuho.InstrumentStore.dto.InstrumentDTO;
 import com.tudor.dodonete.mizuho.InstrumentStore.entity.Instrument;
 import com.tudor.dodonete.mizuho.InstrumentStore.exceptions.NoSuchResourceFoundException;
 import com.tudor.dodonete.mizuho.InstrumentStore.repository.InstrumentRepository;
+import com.tudor.dodonete.mizuho.InstrumentStore.repository.StoreRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +29,9 @@ public class InstrumentServiceImplTest {
 
     @Mock
     private InstrumentRepository instrumentRepository;
+
+    @Mock
+    private StoreRepository storeRepository;
 
     @Before
     public void init() {
@@ -55,7 +59,9 @@ public class InstrumentServiceImplTest {
         long INSTRUMENT_ID = 1L;
         Instrument instrument = createDefaultInstrument();
         when(instrumentRepository.findById(INSTRUMENT_ID)).thenReturn(Optional.of(instrument));
+        when(storeRepository.findAllByInstrument(instrument)).thenReturn(new ArrayList<>());
         instrumentService = new InstrumentServiceImpl(instrumentRepository);
+        instrumentService.setStoreRepository(storeRepository);
         //When
         instrumentService.deleteInstrumentById(INSTRUMENT_ID);
         //Then

@@ -7,6 +7,9 @@ public class VendorDTO {
     private long vendorId;
     private String vendorName;
 
+    public VendorDTO() {
+    }
+
     public VendorDTO(long vendorId, String vendorName) {
         this.vendorId = vendorId;
         this.vendorName = vendorName;
