@@ -1,0 +1,443 @@
+{
+	"info": {
+		"_postman_id": "49d6d4a6-a7cf-4420-987f-29303c865768",
+		"name": "Instrument Store",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Vendor Controller",
+			"item": [
+				{
+					"name": "getAllVendors",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/vendor",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vendor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createNewVendor",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"vendorId\": 1,\n\t\"vendorName\": \"Vendor\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/vendor",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vendor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateVendor",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"vendorId\": 51,\n\t\"vendorName\": \"Vendor1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/vendor/51",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vendor",
+								"51"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getVendorById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/vendor/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vendor",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteVendor",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/vendor/51",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vendor",
+								"51"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Instrument Controller",
+			"item": [
+				{
+					"name": "getAllInstruments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/instrument",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"instrument"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createInstrument",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"instrumentId\":12329042,\n\t\"instrumentName\":\"Instrument11\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/instrument",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"instrument"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateInstrument",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"instrumentId\":451,\n\t\"instrumentName\":\"Instrument12\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/instrument/451",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"instrument",
+								"451"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteInstrument",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/instrument/451",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"instrument",
+								"451"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getInstrumentById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/instrument/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"instrument",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "29bf416e-71e0-4964-b7cb-aaddbd5ab479",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "552ae693-d334-4eb3-88b4-569f418f5887",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Store Controller",
+			"item": [
+				{
+					"name": "getAllStoreInformation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/store",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"store"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addStoreInformation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"storeId\": 16543,\n\t\"price\": 5413216543.123,\n\t\"entryDate\": \"2020-04-07\",\n\t\"vendorName\": \"Amazon\",\n\t\"instrumentName\": \"Instrument11\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/store",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"store"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateStoreInformation",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"storeId\": 101,\n\t\"price\": 16354653.002,\n\t\"entryDate\": \"2020-04-07\",\n\t\"vendorName\": \"Vendor\",\n\t\"instrumentName\": \"Instrument8\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/store/101",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"store",
+								"101"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteStoreInformation",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/store/101",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"store",
+								"101"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getStoreInformationById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/store/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"store",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "DownstreamController",
+			"item": [
+				{
+					"name": "getAllRecentPricesForVendor",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/downstream/prices/vendor/201",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"downstream",
+								"prices",
+								"vendor",
+								"201"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllRecentPricesForInstrument",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/downstream/prices/instrument/401",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"downstream",
+								"prices",
+								"instrument",
+								"401"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
