@@ -54,6 +54,9 @@ public class StoreControllerTest extends AbstractControllerTest {
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(201, status);
+        String content = mvcResult.getResponse().getContentAsString();
+        StoreDTO store = super.mapFromJSON(content, StoreDTO.class);
+        assertEquals(PRICE, store.getPrice());
     }
 
     @Test
@@ -75,12 +78,12 @@ public class StoreControllerTest extends AbstractControllerTest {
         String uri = "/store/1";
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri)).andReturn();
         int status = mvcResult.getResponse().getStatus();
-        assertEquals(200, status);
+        assertEquals(204, status);
     }
 
     @Test
     public void updateInformationInStore() throws Exception {
-        long STORE_ID = 51L;
+        long STORE_ID = 1L;
         BigDecimal PRICE = BigDecimal.valueOf(1234567.123);
         String uri = "/store/" + STORE_ID;
         StoreDTO storeDTO = new StoreDTO(
@@ -96,5 +99,9 @@ public class StoreControllerTest extends AbstractControllerTest {
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(200, status);
+
+        String content = mvcResult.getResponse().getContentAsString();
+        StoreDTO store = super.mapFromJSON(content, StoreDTO.class);
+        assertEquals(STORE_ID, store.getStoreId());
     }
 }

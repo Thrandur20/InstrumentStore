@@ -36,18 +36,20 @@ public class StoreController {
 
     @RequestMapping(value = "/store", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void addInformationToStore(@RequestBody @Validated StoreDTO storeDTO) {
+    public StoreDTO addInformationToStore(@RequestBody @Validated StoreDTO storeDTO) {
         storeCommandService.addInformation(storeDTO);
+        return storeQueryService.getStoreInfo(storeDTO, false);
     }
 
     @RequestMapping(value = "/store/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void updateInformationInStore(@PathVariable long id, @RequestBody StoreDTO storeDTO) {
+    public StoreDTO updateInformationInStore(@PathVariable long id, @RequestBody StoreDTO storeDTO) {
         storeCommandService.updateInformation(id, storeDTO);
+        return storeQueryService.getStoreInfo(storeDTO, true);
     }
 
     @RequestMapping(value = "/store/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteStoreInformation(@PathVariable long id) {
         storeCommandService.deleteInformation(id);
     }

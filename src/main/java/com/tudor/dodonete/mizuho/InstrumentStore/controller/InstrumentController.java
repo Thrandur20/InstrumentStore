@@ -28,8 +28,9 @@ public class InstrumentController {
 
     @RequestMapping(value = "/instrument", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createNewInstrument(@RequestBody @Validated InstrumentDTO instrument) {
+    public InstrumentDTO createNewInstrument(@RequestBody @Validated InstrumentDTO instrument) {
         instrumentCommandService.createInstrument(instrument);
+        return instrumentQueryService.getInstrument(instrument, false);
     }
 
     @RequestMapping(value = "/instrument/{instrumentId}", method = RequestMethod.GET)
@@ -39,13 +40,15 @@ public class InstrumentController {
     }
 
     @RequestMapping(value = "/instrument/{instrumentId}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteInstrument(@PathVariable long instrumentId) {
         instrumentCommandService.deleteInstrumentById(instrumentId);
     }
 
     @RequestMapping(value = "/instrument/{instrumentId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void updateInstrument(@RequestBody @Validated InstrumentDTO instrumentDTO, @PathVariable long instrumentId) {
+    @ResponseStatus(HttpStatus.OK)
+    public InstrumentDTO updateInstrument(@RequestBody @Validated InstrumentDTO instrumentDTO, @PathVariable long instrumentId) {
         instrumentCommandService.updateInstrument(instrumentId, instrumentDTO);
+        return instrumentQueryService.getInstrument(instrumentDTO, true);
     }
 }

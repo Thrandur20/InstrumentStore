@@ -85,4 +85,15 @@ public class VendorServiceImpl implements VendorCommandService, VendorQueryServi
             throw new NoSuchResourceFoundException("No vendor was found for the given id");
         }
     }
+
+    @Override
+    public VendorDTO getVendor(VendorDTO vendorDTO, boolean hasId) {
+        Optional<Vendor> foundVendor = hasId ? vendorRepository.findById(vendorDTO.getVendorId()) : vendorRepository.findOneByVendorName(vendorDTO.getVendorName());
+        if (foundVendor.isEmpty()) {
+            throw new NoSuchResourceFoundException("No vendor was found for the given id");
+        }
+        vendorDTO.setVendorId(foundVendor.get().getVendorId());
+        vendorDTO.setVendorName(foundVendor.get().getVendorName());
+        return vendorDTO;
+    }
 }

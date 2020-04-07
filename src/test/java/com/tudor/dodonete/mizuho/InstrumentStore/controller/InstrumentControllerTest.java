@@ -52,7 +52,7 @@ public class InstrumentControllerTest extends AbstractControllerTest {
         String uri = "/instrument/1";
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri)).andReturn();
         int status = mvcResult.getResponse().getStatus();
-        assertEquals(200, status);
+        assertEquals(204, status);
     }
 
     @Test
@@ -66,6 +66,10 @@ public class InstrumentControllerTest extends AbstractControllerTest {
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(201, status);
+
+        String content = mvcResult.getResponse().getContentAsString();
+        InstrumentDTO instrument = super.mapFromJSON(content, InstrumentDTO.class);
+        assertEquals("Instrument", instrument.getInstrumentName());
     }
 
 
@@ -81,5 +85,9 @@ public class InstrumentControllerTest extends AbstractControllerTest {
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(200, status);
+
+        String content = mvcResult.getResponse().getContentAsString();
+        InstrumentDTO instrument = super.mapFromJSON(content, InstrumentDTO.class);
+        assertEquals(INSTRUMENT_ID, instrument.getInstrumentId());
     }
 }

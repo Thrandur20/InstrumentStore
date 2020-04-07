@@ -30,8 +30,9 @@ public class VendorController {
 
     @RequestMapping(value = "/vendor", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createNewVendor(@RequestBody @Validated VendorDTO vendor) {
+    public VendorDTO createNewVendor(@RequestBody @Validated VendorDTO vendor) {
         vendorCommandService.createVendor(vendor);
+        return vendorQueryService.getVendor(vendor, false);
     }
 
     @RequestMapping(value = "/vendor/{vendorId}", method = RequestMethod.GET)
@@ -41,13 +42,15 @@ public class VendorController {
     }
 
     @RequestMapping(value = "/vendor/{vendorId}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteVendor(@PathVariable long vendorId) {
         vendorCommandService.deleteVendorById(vendorId);
     }
 
     @RequestMapping(value = "/vendor/{vendorId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void updateVendor(@RequestBody @Validated VendorDTO vendorDTO, @PathVariable long vendorId) {
+    @ResponseStatus(HttpStatus.OK)
+    public VendorDTO updateVendor(@RequestBody @Validated VendorDTO vendorDTO, @PathVariable long vendorId) {
         vendorCommandService.updateVendor(vendorId, vendorDTO);
+        return vendorQueryService.getVendor(vendorDTO, true);
     }
 }

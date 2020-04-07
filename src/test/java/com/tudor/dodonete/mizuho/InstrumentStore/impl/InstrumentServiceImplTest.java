@@ -1,7 +1,9 @@
 package com.tudor.dodonete.mizuho.InstrumentStore.impl;
 
 import com.tudor.dodonete.mizuho.InstrumentStore.dto.InstrumentDTO;
+import com.tudor.dodonete.mizuho.InstrumentStore.dto.VendorDTO;
 import com.tudor.dodonete.mizuho.InstrumentStore.entity.Instrument;
+import com.tudor.dodonete.mizuho.InstrumentStore.entity.Vendor;
 import com.tudor.dodonete.mizuho.InstrumentStore.exceptions.NoSuchResourceFoundException;
 import com.tudor.dodonete.mizuho.InstrumentStore.repository.InstrumentRepository;
 import com.tudor.dodonete.mizuho.InstrumentStore.repository.StoreRepository;
@@ -162,6 +164,75 @@ public class InstrumentServiceImplTest {
         instrumentService = new InstrumentServiceImpl(instrumentRepository);
         //When
         instrumentService.getInstrumentById(INSTRUMENT_ID);
+        //Then throw exception
+    }
+
+
+    @Test
+    public void getInstrumentInformationAfterUpdateAndReturnValue() {
+        //Given
+        long INSTRUMENT_ID = 1L;
+        Instrument defaultInstrument = createDefaultInstrument();
+        InstrumentDTO givenInstrument = new InstrumentDTO(
+                defaultInstrument.getInstrumentId(),
+                defaultInstrument.getInstrumentName()
+        );
+        when(instrumentRepository.findById(INSTRUMENT_ID)).thenReturn(Optional.of(defaultInstrument));
+        instrumentService = new InstrumentServiceImpl(instrumentRepository);
+        //When
+        InstrumentDTO foundInstrument = instrumentService.getInstrument(givenInstrument, true);
+        //Then
+        InstrumentDTO expectedDto = new InstrumentDTO(1L, "Instrument");
+        assertEquals(expectedDto, foundInstrument);
+    }
+
+    @Test
+    public void getInstrumentInformationAfterInsertAndReturnValue() {
+        //Given
+        Instrument defaultInstrument = createDefaultInstrument();
+        InstrumentDTO givenInstrument = new InstrumentDTO(
+                defaultInstrument.getInstrumentId(),
+                defaultInstrument.getInstrumentName()
+        );
+        when(instrumentRepository.findOneByInstrumentName(defaultInstrument.getInstrumentName()))
+                .thenReturn(Optional.of(defaultInstrument));
+        instrumentService = new InstrumentServiceImpl(instrumentRepository);
+        //When
+        InstrumentDTO foundInstrument = instrumentService.getInstrument(givenInstrument, false);
+        //Then
+        InstrumentDTO expectedDto = new InstrumentDTO(1L, "Instrument");
+        assertEquals(expectedDto, foundInstrument);
+    }
+
+    @Test(expected = NoSuchResourceFoundException.class)
+    public void getInstrumentAfterUpdateInformationButReturnException() {
+        //Given
+        long INSTRUMENT_ID = 1L;
+        Instrument defaultInstrument = createDefaultInstrument();
+        InstrumentDTO givenInstrument = new InstrumentDTO(
+                defaultInstrument.getInstrumentId(),
+                defaultInstrument.getInstrumentName()
+        );
+        when(instrumentRepository.findById(INSTRUMENT_ID)).thenReturn(Optional.empty());
+        instrumentService = new InstrumentServiceImpl(instrumentRepository);
+        //When
+        InstrumentDTO foundInstrument = instrumentService.getInstrument(givenInstrument, true);
+        //Then throw exception
+    }
+
+    @Test(expected = NoSuchResourceFoundException.class)
+    public void getInstrumentAfterInsertInformationButReturnException() {
+        //Given
+        Instrument defaultInstrument = createDefaultInstrument();
+        InstrumentDTO givenInstrument = new InstrumentDTO(
+                defaultInstrument.getInstrumentId(),
+                defaultInstrument.getInstrumentName()
+        );
+        when(instrumentRepository.findOneByInstrumentName(defaultInstrument.getInstrumentName()))
+                .thenReturn(Optional.empty());
+        instrumentService = new InstrumentServiceImpl(instrumentRepository);
+        //When
+        InstrumentDTO foundInstrument = instrumentService.getInstrument(givenInstrument, false);
         //Then throw exception
     }
 

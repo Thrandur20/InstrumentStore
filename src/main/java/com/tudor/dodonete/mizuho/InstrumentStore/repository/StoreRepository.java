@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
@@ -27,4 +28,6 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     List<Store> findAllRecentByInstrumentId(long instrumentId, Date startDate);
 
     List<Store> findAllByInstrument(Instrument instrument);
+
+    Optional<Store> findOneByInstrumentAndVendor(Instrument instrument, Vendor vendor);
 }

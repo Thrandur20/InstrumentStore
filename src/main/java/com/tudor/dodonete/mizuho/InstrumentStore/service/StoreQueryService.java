@@ -8,4 +8,6 @@ public interface StoreQueryService {
     List<StoreDTO> getAllStoreInfo();
 
     StoreDTO getStoreInfoById(long id);
+
+    StoreDTO getStoreInfo(StoreDTO storeDTO, boolean hasId);
 }

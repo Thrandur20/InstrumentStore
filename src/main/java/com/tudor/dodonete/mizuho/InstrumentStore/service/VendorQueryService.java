@@ -8,4 +8,6 @@ public interface VendorQueryService {
     List<VendorDTO> getAllVendors();
 
     VendorDTO getVendorById(long id);
+
+    VendorDTO getVendor(VendorDTO vendor, boolean hasId);
 }

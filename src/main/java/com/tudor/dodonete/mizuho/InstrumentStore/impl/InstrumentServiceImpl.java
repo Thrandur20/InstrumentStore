@@ -3,6 +3,7 @@ package com.tudor.dodonete.mizuho.InstrumentStore.impl;
 import com.tudor.dodonete.mizuho.InstrumentStore.dto.InstrumentDTO;
 import com.tudor.dodonete.mizuho.InstrumentStore.entity.Instrument;
 import com.tudor.dodonete.mizuho.InstrumentStore.entity.Store;
+import com.tudor.dodonete.mizuho.InstrumentStore.entity.Vendor;
 import com.tudor.dodonete.mizuho.InstrumentStore.exceptions.NoSuchResourceFoundException;
 import com.tudor.dodonete.mizuho.InstrumentStore.repository.InstrumentRepository;
 import com.tudor.dodonete.mizuho.InstrumentStore.repository.StoreRepository;
@@ -83,5 +84,16 @@ public class InstrumentServiceImpl implements InstrumentQueryService, Instrument
         } else {
             throw new NoSuchResourceFoundException("No instrument was found for the given id");
         }
+    }
+
+    @Override
+    public InstrumentDTO getInstrument(InstrumentDTO instrumentDTO, boolean hasId) {
+        Optional<Instrument> foundInstrument = hasId ? instrumentRepository.findById(instrumentDTO.getInstrumentId()) : instrumentRepository.findOneByInstrumentName(instrumentDTO.getInstrumentName());
+        if (foundInstrument.isEmpty()) {
+            throw new NoSuchResourceFoundException("No vendor was found for the given id");
+        }
+        instrumentDTO.setInstrumentId(foundInstrument.get().getInstrumentId());
+        instrumentDTO.setInstrumentName(foundInstrument.get().getInstrumentName());
+        return instrumentDTO;
     }
 }

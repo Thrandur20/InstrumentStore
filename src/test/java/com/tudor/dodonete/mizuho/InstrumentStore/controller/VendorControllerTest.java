@@ -44,6 +44,10 @@ public class VendorControllerTest extends AbstractControllerTest {
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(201, status);
+
+        String content = mvcResult.getResponse().getContentAsString();
+        VendorDTO vendor = super.mapFromJSON(content, VendorDTO.class);
+        assertEquals("Vendor", vendor.getVendorName());
     }
 
     @Test
@@ -57,7 +61,7 @@ public class VendorControllerTest extends AbstractControllerTest {
 
         String content = mvcResult.getResponse().getContentAsString();
         VendorDTO vendor = super.mapFromJSON(content, VendorDTO.class);
-        assertEquals(vendor.getVendorId(), 51L);
+        assertEquals(51L, vendor.getVendorId());
     }
 
     @Test
@@ -65,7 +69,7 @@ public class VendorControllerTest extends AbstractControllerTest {
         String uri = "/vendor/1";
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri)).andReturn();
         int status = mvcResult.getResponse().getStatus();
-        assertEquals(200, status);
+        assertEquals(204, status);
     }
 
     @Test
@@ -80,5 +84,8 @@ public class VendorControllerTest extends AbstractControllerTest {
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(200, status);
+        String content = mvcResult.getResponse().getContentAsString();
+        VendorDTO vendor = super.mapFromJSON(content, VendorDTO.class);
+        assertEquals(VENDOR_ID, vendor.getVendorId());
     }
 }

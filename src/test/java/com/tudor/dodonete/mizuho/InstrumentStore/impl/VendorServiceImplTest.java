@@ -94,6 +94,63 @@ public class VendorServiceImplTest {
         verify(vendorRepository).save(expectedVendor);
     }
 
+
+    @Test
+    public void getVendorInformationAfterUpdateAndReturnValue() {
+        //Given
+        long VENDOR_ID = 1L;
+        Vendor defaultVendor = createDefaultVendor(VENDOR_ID);
+        VendorDTO givenVendor = new VendorDTO(defaultVendor.getVendorId(), defaultVendor.getVendorName());
+        when(vendorRepository.findById(VENDOR_ID)).thenReturn(Optional.of(defaultVendor));
+        vendorService = new VendorServiceImpl(vendorRepository);
+        //When
+        VendorDTO foundVendor = vendorService.getVendor(givenVendor, true);
+        //Then
+        VendorDTO expectedDto = new VendorDTO(1L, "Vendor");
+        assertEquals(expectedDto, foundVendor);
+    }
+
+    @Test
+    public void getVendorInformationAfterInsertAndReturnValue() {
+        //Given
+        long VENDOR_ID = 1L;
+        Vendor defaultVendor = createDefaultVendor(VENDOR_ID);
+        VendorDTO givenVendor = new VendorDTO(defaultVendor.getVendorId(), defaultVendor.getVendorName());
+        when(vendorRepository.findOneByVendorName(defaultVendor.getVendorName())).thenReturn(Optional.of(defaultVendor));
+        vendorService = new VendorServiceImpl(vendorRepository);
+        //When
+        VendorDTO foundVendor = vendorService.getVendor(givenVendor, false);
+        //Then
+        VendorDTO expectedDto = new VendorDTO(1L, "Vendor");
+        assertEquals(expectedDto, foundVendor);
+    }
+
+    @Test(expected = NoSuchResourceFoundException.class)
+    public void getVendorAfterUpdateInformationButReturnException(){
+        //Given
+        long VENDOR_ID = 2L;
+        Vendor defaultVendor = createDefaultVendor(VENDOR_ID);
+        VendorDTO givenVendor = new VendorDTO(defaultVendor.getVendorId(), defaultVendor.getVendorName());
+        when(vendorRepository.findById(VENDOR_ID)).thenReturn(Optional.empty());
+        vendorService = new VendorServiceImpl(vendorRepository);
+        //When
+        vendorService.getVendor(givenVendor, true);
+        //Then throw exception
+    }
+
+    @Test(expected = NoSuchResourceFoundException.class)
+    public void getVendorAfterInsertInformationButReturnException(){
+        //Given
+        long VENDOR_ID = 2L;
+        Vendor defaultVendor = createDefaultVendor(VENDOR_ID);
+        VendorDTO givenVendor = new VendorDTO(defaultVendor.getVendorId(), defaultVendor.getVendorName());
+        when(vendorRepository.findOneByVendorName(defaultVendor.getVendorName())).thenReturn(Optional.empty());
+        vendorService = new VendorServiceImpl(vendorRepository);
+        //When
+        vendorService.getVendor(givenVendor, false);
+        //Then throw exception
+    }
+
     @Test(expected = NoSuchResourceFoundException.class)
     public void updateVendorButThrowExceptionBecauseIdWasNotFound() {
         //Given

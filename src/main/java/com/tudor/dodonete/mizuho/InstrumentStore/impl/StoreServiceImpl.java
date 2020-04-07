@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,16 +83,14 @@ public class StoreServiceImpl implements StoreQueryService, StoreCommandService 
     public List<StoreDTO> getAllStoreInfo() {
         List<Store> storeList = storeRepository.findAll();
         List<StoreDTO> storeDtoList = new ArrayList<>();
-        storeList.forEach(store -> {
-            storeDtoList.add(
-                    new StoreDTO(
-                            store.getStoreId(),
-                            store.getPrice(),
-                            store.getEntryDate(),
-                            store.getVendor().getVendorName(),
-                            store.getInstrument().getInstrumentName())
-            );
-        });
+        storeList.forEach(store -> storeDtoList.add(
+                new StoreDTO(
+                        store.getStoreId(),
+                        store.getPrice(),
+                        store.getEntryDate(),
+                        store.getVendor().getVendorName(),
+                        store.getInstrument().getInstrumentName())
+        ));
         return storeDtoList;
     }
 
@@ -110,6 +107,28 @@ public class StoreServiceImpl implements StoreQueryService, StoreCommandService 
         } else {
             throw new NoSuchResourceFoundException("There is no Store information at that id");
         }
+    }
+
+    @Override
+    public StoreDTO getStoreInfo(StoreDTO storeDTO, boolean hasId) {
+        Optional<Vendor> foundVendor = vendorRepository.findOneByVendorName(storeDTO.getVendorName());
+        Optional<Instrument> foundInstrument = instrumentRepository.findOneByInstrumentName(storeDTO.getInstrumentName());
+        if (foundInstrument.isEmpty() || foundVendor.isEmpty()) {
+            throw new NoSuchResourceFoundException("No Vendor or Instrument found for the given names");
+        }
+
+        Optional<Store> foundStore = hasId ? storeRepository.findById(storeDTO.getStoreId()) :
+                storeRepository.findOneByInstrumentAndVendor(foundInstrument.get(), foundVendor.get());
+        if (foundStore.isEmpty()) {
+            throw new NoSuchResourceFoundException("No Store Information was found for the given id");
+        }
+
+        storeDTO.setStoreId(foundStore.get().getStoreId());
+        storeDTO.setPrice(foundStore.get().getPrice());
+        storeDTO.setEntryDate(foundStore.get().getEntryDate());
+        storeDTO.setInstrumentName(foundInstrument.get().getInstrumentName());
+        storeDTO.setVendorName(foundVendor.get().getVendorName());
+        return storeDTO;
     }
 
     private void verifyIfVendorExistsAndSave(StoreDTO storeDTO, Store store) {

@@ -8,4 +8,6 @@ public interface InstrumentQueryService {
     List<InstrumentDTO> getAllInstruments();
 
     InstrumentDTO getInstrumentById(long id);
+
+    InstrumentDTO getInstrument(InstrumentDTO instrumentDTO, boolean hasId);
 }

@@ -1,6 +1,5 @@
 package com.tudor.dodonete.mizuho.InstrumentStore.impl;
 
-import com.tudor.dodonete.mizuho.InstrumentStore.dto.InstrumentDTO;
 import com.tudor.dodonete.mizuho.InstrumentStore.dto.StoreDTO;
 import com.tudor.dodonete.mizuho.InstrumentStore.entity.Instrument;
 import com.tudor.dodonete.mizuho.InstrumentStore.entity.Store;
@@ -21,7 +20,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -347,6 +347,245 @@ public class StoreServiceImplTest {
         //When
         storeService.getStoreInfoById(STORE_ID);
         //Then expected exception to be thrown
+    }
+
+
+    @Test
+    public void getStoreInformationAfterUpdateAndReturnValue() {
+        //Given
+        long STORE_ID = 3L;
+        Date DEFAULT_DATE = createDefaultDate();
+        Store defaultStore = createDefaultStore();
+        defaultStore.setEntryDate(DEFAULT_DATE);
+        StoreDTO givenStoreEntry = new StoreDTO(
+                defaultStore.getStoreId(),
+                defaultStore.getPrice(),
+                defaultStore.getEntryDate(),
+                defaultStore.getVendor().getVendorName(),
+                defaultStore.getInstrument().getInstrumentName()
+        );
+        when(instrumentRepository.findOneByInstrumentName(defaultStore.getInstrument().getInstrumentName()))
+                .thenReturn(Optional.of(createDefaultInstrument()));
+        when(vendorRepository.findOneByVendorName(defaultStore.getVendor().getVendorName()))
+                .thenReturn(Optional.of(createDefaultVendor()));
+        when(dateUtility.getCurrentDate()).thenReturn(DEFAULT_DATE);
+        when(storeRepository.findById(STORE_ID)).thenReturn(Optional.of(defaultStore));
+        storeService = new StoreServiceImpl(storeRepository, dateUtility);
+        storeService.setVendorRepository(vendorRepository);
+        storeService.setInstrumentRepository(instrumentRepository);
+        //When
+        StoreDTO foundStore = storeService.getStoreInfo(givenStoreEntry, true);
+        //Then
+        StoreDTO expectedDto = new StoreDTO(
+                STORE_ID,
+                PRICE,
+                DEFAULT_DATE,
+                "Vendor",
+                "Instrument 1"
+        );
+        assertEquals(expectedDto, foundStore);
+    }
+
+    @Test
+    public void getStoreInformationAfterInsertAndReturnValue() {
+        //Given
+        long STORE_ID = 3L;
+        Date DEFAULT_DATE = createDefaultDate();
+        Store defaultStore = createDefaultStore();
+        defaultStore.setEntryDate(DEFAULT_DATE);
+        StoreDTO givenStoreEntry = new StoreDTO(
+                defaultStore.getStoreId(),
+                defaultStore.getPrice(),
+                defaultStore.getEntryDate(),
+                defaultStore.getVendor().getVendorName(),
+                defaultStore.getInstrument().getInstrumentName()
+        );
+        when(instrumentRepository.findOneByInstrumentName(defaultStore.getInstrument().getInstrumentName()))
+                .thenReturn(Optional.of(createDefaultInstrument()));
+        when(vendorRepository.findOneByVendorName(defaultStore.getVendor().getVendorName()))
+                .thenReturn(Optional.of(createDefaultVendor()));
+        when(dateUtility.getCurrentDate()).thenReturn(DEFAULT_DATE);
+        when(storeRepository.findOneByInstrumentAndVendor(any(Instrument.class), any(Vendor.class)))
+                .thenReturn(Optional.of(defaultStore));
+        storeService = new StoreServiceImpl(storeRepository, dateUtility);
+        storeService.setVendorRepository(vendorRepository);
+        storeService.setInstrumentRepository(instrumentRepository);
+        //When
+        StoreDTO foundStore = storeService.getStoreInfo(givenStoreEntry, false);
+        //Then
+        StoreDTO expectedDto = new StoreDTO(
+                STORE_ID,
+                PRICE,
+                DEFAULT_DATE,
+                "Vendor",
+                "Instrument 1"
+        );
+        assertEquals(expectedDto, foundStore);
+    }
+
+    @Test(expected = NoSuchResourceFoundException.class)
+    public void getStoreAfterUpdateInformationButReturnException() {
+        //Given
+        long STORE_ID = 1L;
+        Date DEFAULT_DATE = createDefaultDate();
+        Store defaultStore = createDefaultStore();
+        defaultStore.setEntryDate(DEFAULT_DATE);
+        StoreDTO givenStoreEntry = new StoreDTO(
+                defaultStore.getStoreId(),
+                defaultStore.getPrice(),
+                defaultStore.getEntryDate(),
+                defaultStore.getVendor().getVendorName(),
+                defaultStore.getInstrument().getInstrumentName()
+        );
+        when(instrumentRepository.findOneByInstrumentName(defaultStore.getInstrument().getInstrumentName()))
+                .thenReturn(Optional.of(createDefaultInstrument()));
+        when(vendorRepository.findOneByVendorName(defaultStore.getVendor().getVendorName()))
+                .thenReturn(Optional.of(createDefaultVendor()));
+        when(dateUtility.getCurrentDate()).thenReturn(DEFAULT_DATE);
+        when(storeRepository.findById(STORE_ID)).thenReturn(Optional.empty());
+        storeService = new StoreServiceImpl(storeRepository, dateUtility);
+        storeService.setVendorRepository(vendorRepository);
+        storeService.setInstrumentRepository(instrumentRepository);
+        //When
+        storeService.getStoreInfo(givenStoreEntry, true);
+        //Then throw exception
+    }
+
+    @Test(expected = NoSuchResourceFoundException.class)
+    public void getStoreAfterUpdateButNoVendorFoundInformationButReturnException() {
+        //Given
+        long STORE_ID = 1L;
+        Date DEFAULT_DATE = createDefaultDate();
+        Store defaultStore = createDefaultStore();
+        StoreDTO givenStoreEntry = new StoreDTO(
+                defaultStore.getStoreId(),
+                defaultStore.getPrice(),
+                defaultStore.getEntryDate(),
+                defaultStore.getVendor().getVendorName(),
+                defaultStore.getInstrument().getInstrumentName()
+        );
+        when(instrumentRepository.findOneByInstrumentName(defaultStore.getInstrument().getInstrumentName()))
+                .thenReturn(Optional.of(createDefaultInstrument()));
+        when(vendorRepository.findOneByVendorName(defaultStore.getVendor().getVendorName()))
+                .thenReturn(Optional.empty());
+        when(dateUtility.getCurrentDate()).thenReturn(DEFAULT_DATE);
+        when(storeRepository.findById(STORE_ID)).thenReturn(Optional.of(defaultStore));
+        storeService = new StoreServiceImpl(storeRepository, dateUtility);
+        storeService.setVendorRepository(vendorRepository);
+        storeService.setInstrumentRepository(instrumentRepository);
+        //When
+        storeService.getStoreInfo(givenStoreEntry, true);
+        //Then throw exception
+    }
+
+    @Test(expected = NoSuchResourceFoundException.class)
+    public void getStoreAfterUpdateButNoInstrumentFoundInformationButReturnException() {
+        //Given
+        long STORE_ID = 1L;
+        Date DEFAULT_DATE = createDefaultDate();
+        Store defaultStore = createDefaultStore();
+        StoreDTO givenStoreEntry = new StoreDTO(
+                defaultStore.getStoreId(),
+                defaultStore.getPrice(),
+                defaultStore.getEntryDate(),
+                defaultStore.getVendor().getVendorName(),
+                defaultStore.getInstrument().getInstrumentName()
+        );
+        when(instrumentRepository.findOneByInstrumentName(defaultStore.getInstrument().getInstrumentName()))
+                .thenReturn(Optional.empty());
+        when(vendorRepository.findOneByVendorName(defaultStore.getVendor().getVendorName()))
+                .thenReturn(Optional.of(createDefaultVendor()));
+        when(dateUtility.getCurrentDate()).thenReturn(DEFAULT_DATE);
+        when(storeRepository.findById(STORE_ID)).thenReturn(Optional.of(defaultStore));
+        storeService = new StoreServiceImpl(storeRepository, dateUtility);
+        storeService.setVendorRepository(vendorRepository);
+        storeService.setInstrumentRepository(instrumentRepository);
+        //When
+        storeService.getStoreInfo(givenStoreEntry, true);
+        //Then throw exception
+    }
+
+    @Test(expected = NoSuchResourceFoundException.class)
+    public void getStoreAfterInsertInformationButReturnException() {
+        //Given
+        Date DEFAULT_DATE = createDefaultDate();
+        Store defaultStore = createDefaultStore();
+        StoreDTO givenStoreEntry = new StoreDTO(
+                defaultStore.getStoreId(),
+                defaultStore.getPrice(),
+                defaultStore.getEntryDate(),
+                defaultStore.getVendor().getVendorName(),
+                defaultStore.getInstrument().getInstrumentName()
+        );
+        when(instrumentRepository.findOneByInstrumentName(defaultStore.getInstrument().getInstrumentName()))
+                .thenReturn(Optional.of(createDefaultInstrument()));
+        when(vendorRepository.findOneByVendorName(defaultStore.getVendor().getVendorName()))
+                .thenReturn(Optional.of(createDefaultVendor()));
+        when(dateUtility.getCurrentDate()).thenReturn(DEFAULT_DATE);
+        when(storeRepository.findOneByInstrumentAndVendor(any(Instrument.class), any(Vendor.class)))
+                .thenReturn(Optional.empty());
+        storeService = new StoreServiceImpl(storeRepository, dateUtility);
+        storeService.setVendorRepository(vendorRepository);
+        storeService.setInstrumentRepository(instrumentRepository);
+        //When
+        storeService.getStoreInfo(givenStoreEntry, false);
+        //Then throw exception
+    }
+
+    @Test(expected = NoSuchResourceFoundException.class)
+    public void getStoreAfterInsertButNoVendorFoundInformationButReturnException() {
+        //Given
+        long STORE_ID = 1L;
+        Date DEFAULT_DATE = createDefaultDate();
+        Store defaultStore = createDefaultStore();
+        StoreDTO givenStoreEntry = new StoreDTO(
+                defaultStore.getStoreId(),
+                defaultStore.getPrice(),
+                defaultStore.getEntryDate(),
+                defaultStore.getVendor().getVendorName(),
+                defaultStore.getInstrument().getInstrumentName()
+        );
+        when(instrumentRepository.findOneByInstrumentName(defaultStore.getInstrument().getInstrumentName()))
+                .thenReturn(Optional.of(createDefaultInstrument()));
+        when(vendorRepository.findOneByVendorName(defaultStore.getVendor().getVendorName()))
+                .thenReturn(Optional.empty());
+        when(dateUtility.getCurrentDate()).thenReturn(DEFAULT_DATE);
+        when(storeRepository.findOneByInstrumentAndVendor(any(Instrument.class), any(Vendor.class)))
+                .thenReturn(Optional.of(defaultStore));
+        storeService = new StoreServiceImpl(storeRepository, dateUtility);
+        storeService.setVendorRepository(vendorRepository);
+        storeService.setInstrumentRepository(instrumentRepository);
+        //When
+        storeService.getStoreInfo(givenStoreEntry, false);
+        //Then throw exception
+    }
+
+    @Test(expected = NoSuchResourceFoundException.class)
+    public void getStoreAfterInsertButNoInstrumentFoundInformationButReturnException() {
+        //Given
+        long STORE_ID = 1L;
+        Date DEFAULT_DATE = createDefaultDate();
+        Store defaultStore = createDefaultStore();
+        StoreDTO givenStoreEntry = new StoreDTO(
+                defaultStore.getStoreId(),
+                defaultStore.getPrice(),
+                defaultStore.getEntryDate(),
+                defaultStore.getVendor().getVendorName(),
+                defaultStore.getInstrument().getInstrumentName()
+        );
+        when(instrumentRepository.findOneByInstrumentName(defaultStore.getInstrument().getInstrumentName()))
+                .thenReturn(Optional.empty());
+        when(vendorRepository.findOneByVendorName(defaultStore.getVendor().getVendorName()))
+                .thenReturn(Optional.of(createDefaultVendor()));
+        when(dateUtility.getCurrentDate()).thenReturn(DEFAULT_DATE);
+        when(storeRepository.findOneByInstrumentAndVendor(any(Instrument.class), any(Vendor.class)))
+                .thenReturn(Optional.of(defaultStore));
+        storeService = new StoreServiceImpl(storeRepository, dateUtility);
+        storeService.setVendorRepository(vendorRepository);
+        storeService.setInstrumentRepository(instrumentRepository);
+        //When
+        storeService.getStoreInfo(givenStoreEntry, false);
+        //Then throw exception
     }
 
     private Vendor createDefaultVendor() {
